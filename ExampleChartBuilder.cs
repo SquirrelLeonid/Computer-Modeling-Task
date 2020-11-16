@@ -9,7 +9,7 @@ namespace Computer_Modeling_Task
         private const int minRandomValue = 1;
         private const int maxRandomValue = 21;
 
-        private static readonly string seriesName = "XY_ExampleValues";    
+        public static readonly string SeriesName = "XY_ExampleValues";    
 
         public static void BuildExampleChart(Chart chart)
         {
@@ -29,7 +29,7 @@ namespace Computer_Modeling_Task
         private static void DrawChartValues(Chart chart, int[] yValues)
         {
             for (int i = 0; i < valuesCount; i++)
-                chart.Series[seriesName].Points.AddXY(i, yValues[i]);
+                chart.Series[SeriesName].Points.AddXY(i, yValues[i]);
         }
     }
 }
