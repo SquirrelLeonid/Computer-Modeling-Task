@@ -10,22 +10,55 @@ namespace Computer_Modeling_Task
     {
         private ChartManager _manager;
 
+        private int minimumChartWidth;
+        private int minimumChartHeight;
+        
+        private Point _prevMousePos;
+        private bool isMouseDown = false;
+
         public Form1()
         {
             InitializeComponent();
-            _manager = new ChartManager(Chart);
+            AddEvents();
+            InitFields();
+               
         }       
+
+        private void AddEvents()
+        {
+            Chart.MouseWheel += new MouseEventHandler(Chart_MouseWheel);
+        }
+
+        private void InitFields()
+        {
+            _manager = new ChartManager(Chart);
+            minimumChartWidth = Chart.Size.Width;
+            minimumChartHeight = Chart.Size.Height;
+        }
+
+        private void Chart_MouseWheel(object sender, MouseEventArgs e)
+        {
+            var oldChartSize = Chart.Size;
+
+            if (e.Delta > 0)
+                Chart.Size = new Size(Chart.Size.Width + minimumChartWidth / 10, Chart.Size.Height + minimumChartHeight / 10);
+            else if (e.Delta < 0)
+            {
+                int newWidth = Chart.Size.Width - minimumChartWidth / 10;
+                int newHeight = Chart.Size.Height - minimumChartHeight / 10;
+                if (newWidth >= minimumChartWidth && newHeight >= minimumChartHeight)
+                    Chart.Size = new Size(newWidth, newHeight);
+            }
+        }
 
         private void ExampleChart_Button_Click(object sender, EventArgs e)
         {
             ExampleChartBuilder.BuildExampleChart(Chart);
         }
 
-        //TODO: добавить выбор того, что удаляем
         private void ClearChartArea_Button_Click(object sender, EventArgs e)
         {
-            foreach (var series in Chart.Series)
-                series.Points.Clear();
+            _manager.ClearAll();
         }
 
         private void Draw_Button_Click(object sender, EventArgs e)
@@ -36,14 +69,14 @@ namespace Computer_Modeling_Task
             string choosedChart = ChooseChart_ComboBox.SelectedItem.ToString();
             string choosedMethod = ChooseMethod_ComboBox.SelectedItem.ToString();
 
-            double startX = 1.0;
-            double startY = 0.0;
-            double stepValue = 0.0;
-            int iterationsCount = 0;
+            var startX = 1.0;
+            var startY = 0.0;
+            var stepValue = 0.0;
+            var iterations = 0;
 
             if (StartX_TextBox.Text.Length != 0 && StartY_TextBox.Text.Length != 0)
             {
-                if (!double.TryParse(StartX_TextBox.Text, out startX) || !double.TryParse(StartX_TextBox.Text, out startY))
+                if (!double.TryParse(StartX_TextBox.Text, out startX) || !double.TryParse(StartY_TextBox.Text, out startY))
                 {
                     MessageBox.Show("Недопустимые координаты.");
                     return;
@@ -56,8 +89,8 @@ namespace Computer_Modeling_Task
                 return;
             }
 
-            if (Iterations_TextBox.Text.Length != 0 && !int.TryParse(Iterations_TextBox.Text, out iterationsCount)
-                || iterationsCount < 0)
+            if (Iterations_TextBox.Text.Length != 0 && !int.TryParse(Iterations_TextBox.Text, out iterations)
+                || iterations < 0)
             {
                 MessageBox.Show("Недопустимое количество итераций.");
                 return;
@@ -65,8 +98,8 @@ namespace Computer_Modeling_Task
 
             BaseChart chartType = GetChartType();
             double[] parameters = GetParameters();
-            _manager.Draw(chartType, ChooseMethod_ComboBox.SelectedItem.ToString(),
-                startX, startY, stepValue, iterationsCount, parameters);
+            string methodName = ChooseMethod_ComboBox.SelectedItem.ToString();
+            _manager.Draw(chartType, methodName, startX, startY, stepValue, iterations, parameters);
         } 
         
         private double[] GetParameters()
@@ -98,7 +131,7 @@ namespace Computer_Modeling_Task
             if (choice.Equals("Тестовый пример"))
                return new TestChart();
             if (choice.Equals("Электрический генератор с жестким возбуждением"))
-                return new MyTaskChart();
+               return new MyTaskChart();
             return null;
         }
 
@@ -125,5 +158,35 @@ namespace Computer_Modeling_Task
             return false;
         }
 
+        private void Chart_MouseDown(object sender, MouseEventArgs e)
+        {
+            _prevMousePos = e.Location;
+            isMouseDown = true;
+            System.Windows.Forms.Cursor.Current = Cursors.Hand;
+        }
+
+        //TODO: Попробовать решить проблему с мерцанием
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isMouseDown)
+            {
+                int mousePosX = e.X;
+                int mousePosY = e.Y;
+
+                int diffX = mousePosX - _prevMousePos.X;
+                int diffY = mousePosY - _prevMousePos.Y;
+
+                Chart.Location = new Point(Chart.Location.X + diffX, Chart.Location.Y + diffY);
+
+                _prevMousePos.X = mousePosX;
+                _prevMousePos.Y = mousePosY;
+            }
+        }
+
+        private void Chart_MouseUp(object sender, MouseEventArgs e)
+        {
+            isMouseDown = false;
+            System.Windows.Forms.Cursor.Current = Cursors.Default;
+        }       
     }
 }

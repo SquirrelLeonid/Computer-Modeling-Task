@@ -10,9 +10,24 @@ namespace Computer_Modeling_Task
     {
         public int SerialNumber = 0;
         public string BaseName { protected set; get; }
+        public int requireParamsNumber { protected set; get; }
 
+        /// <summary>
+        /// Передавать параметры в алфавитном порядке
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="parameters"> Параметры, перечисленные по-порядку или переданные массивом </param>
+        /// <returns> Возвращает значение функции</returns>
         public abstract double f(double x, double y, params double[] parameters);
 
-        public abstract double g(double x, double y, params double[] parametrs);
+        /// <summary>
+        /// Передавать параметры в алфавитном порядке
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="parameters"> Параметры, перечисленные по-порядку или переданные массивом </param>
+        /// <returns> Возвращает значение функции</returns>
+        public abstract double g(double x, double y, params double[] parameters);
     }
 }

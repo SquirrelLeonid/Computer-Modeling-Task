@@ -32,7 +32,7 @@
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ExampleChart_Button = new System.Windows.Forms.Button();
-            this.ClearChartArea_Button = new System.Windows.Forms.Button();
+            this.Clear_Button = new System.Windows.Forms.Button();
             this.StartX_TextBox = new System.Windows.Forms.TextBox();
             this.StartX_Label = new System.Windows.Forms.Label();
             this.StartY_Label = new System.Windows.Forms.Label();
@@ -49,16 +49,21 @@
             this.StepValue_TextBox = new System.Windows.Forms.TextBox();
             this.Parameters_Label = new System.Windows.Forms.Label();
             this.Parameters_TextBox = new System.Windows.Forms.TextBox();
+            this.InnerPanel_Panel = new System.Windows.Forms.Panel();
+            this.OuterPanel_Panel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.Chart)).BeginInit();
+            this.InnerPanel_Panel.SuspendLayout();
+            this.OuterPanel_Panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // Chart
             // 
+            this.Chart.Anchor = System.Windows.Forms.AnchorStyles.None;
             chartArea1.BackColor = System.Drawing.Color.White;
+            chartArea1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
             chartArea1.Name = "MainArea";
             this.Chart.ChartAreas.Add(chartArea1);
-            this.Chart.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.Chart.Location = new System.Drawing.Point(0, 159);
+            this.Chart.Location = new System.Drawing.Point(0, 0);
             this.Chart.Name = "Chart";
             series1.BorderWidth = 2;
             series1.ChartArea = "MainArea";
@@ -67,12 +72,16 @@
             series1.IsVisibleInLegend = false;
             series1.Name = "XY_ExampleValues";
             this.Chart.Series.Add(series1);
-            this.Chart.Size = new System.Drawing.Size(1069, 535);
+            this.Chart.Size = new System.Drawing.Size(994, 445);
             this.Chart.TabIndex = 0;
             this.Chart.Text = "chart1";
+            this.Chart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Chart_MouseDown);
+            this.Chart.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Chart_MouseMove);
+            this.Chart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Chart_MouseUp);
             // 
             // ExampleChart_Button
             // 
+            this.ExampleChart_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ExampleChart_Button.Location = new System.Drawing.Point(890, 12);
             this.ExampleChart_Button.Name = "ExampleChart_Button";
             this.ExampleChart_Button.Size = new System.Drawing.Size(128, 43);
@@ -81,15 +90,16 @@
             this.ExampleChart_Button.UseVisualStyleBackColor = true;
             this.ExampleChart_Button.Click += new System.EventHandler(this.ExampleChart_Button_Click);
             // 
-            // ClearChartArea_Button
+            // Clear_Button
             // 
-            this.ClearChartArea_Button.Location = new System.Drawing.Point(513, 12);
-            this.ClearChartArea_Button.Name = "ClearChartArea_Button";
-            this.ClearChartArea_Button.Size = new System.Drawing.Size(121, 43);
-            this.ClearChartArea_Button.TabIndex = 5;
-            this.ClearChartArea_Button.Text = "Очистить область";
-            this.ClearChartArea_Button.UseVisualStyleBackColor = true;
-            this.ClearChartArea_Button.Click += new System.EventHandler(this.ClearChartArea_Button_Click);
+            this.Clear_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Clear_Button.Location = new System.Drawing.Point(526, 12);
+            this.Clear_Button.Name = "Clear_Button";
+            this.Clear_Button.Size = new System.Drawing.Size(92, 43);
+            this.Clear_Button.TabIndex = 5;
+            this.Clear_Button.Text = "Очистить все";
+            this.Clear_Button.UseVisualStyleBackColor = true;
+            this.Clear_Button.Click += new System.EventHandler(this.ClearChartArea_Button_Click);
             // 
             // StartX_TextBox
             // 
@@ -181,6 +191,7 @@
             // 
             // Draw_Button
             // 
+            this.Draw_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Draw_Button.Location = new System.Drawing.Point(376, 12);
             this.Draw_Button.Name = "Draw_Button";
             this.Draw_Button.Size = new System.Drawing.Size(121, 43);
@@ -240,11 +251,29 @@
             this.Parameters_TextBox.Size = new System.Drawing.Size(142, 20);
             this.Parameters_TextBox.TabIndex = 24;
             // 
+            // InnerPanel_Panel
+            // 
+            this.InnerPanel_Panel.Controls.Add(this.Chart);
+            this.InnerPanel_Panel.Location = new System.Drawing.Point(25, 25);
+            this.InnerPanel_Panel.Name = "InnerPanel_Panel";
+            this.InnerPanel_Panel.Size = new System.Drawing.Size(994, 445);
+            this.InnerPanel_Panel.TabIndex = 25;
+            // 
+            // OuterPanel_Panel
+            // 
+            this.OuterPanel_Panel.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.OuterPanel_Panel.Controls.Add(this.InnerPanel_Panel);
+            this.OuterPanel_Panel.Location = new System.Drawing.Point(12, 188);
+            this.OuterPanel_Panel.Name = "OuterPanel_Panel";
+            this.OuterPanel_Panel.Size = new System.Drawing.Size(1045, 494);
+            this.OuterPanel_Panel.TabIndex = 26;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1069, 694);
+            this.Controls.Add(this.OuterPanel_Panel);
             this.Controls.Add(this.Parameters_TextBox);
             this.Controls.Add(this.Parameters_Label);
             this.Controls.Add(this.StepValue_TextBox);
@@ -261,12 +290,13 @@
             this.Controls.Add(this.ChooseMethod_ComboBox);
             this.Controls.Add(this.ChooseChart_Label);
             this.Controls.Add(this.ChooseChart_ComboBox);
-            this.Controls.Add(this.ClearChartArea_Button);
+            this.Controls.Add(this.Clear_Button);
             this.Controls.Add(this.ExampleChart_Button);
-            this.Controls.Add(this.Chart);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.Chart)).EndInit();
+            this.InnerPanel_Panel.ResumeLayout(false);
+            this.OuterPanel_Panel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -276,7 +306,7 @@
 
         private System.Windows.Forms.DataVisualization.Charting.Chart Chart;
         private System.Windows.Forms.Button ExampleChart_Button;
-        private System.Windows.Forms.Button ClearChartArea_Button;
+        private System.Windows.Forms.Button Clear_Button;
         private System.Windows.Forms.TextBox StartX_TextBox;
         private System.Windows.Forms.Label StartX_Label;
         private System.Windows.Forms.Label StartY_Label;
@@ -293,6 +323,8 @@
         private System.Windows.Forms.TextBox StepValue_TextBox;
         private System.Windows.Forms.Label Parameters_Label;
         private System.Windows.Forms.TextBox Parameters_TextBox;
+        private System.Windows.Forms.Panel InnerPanel_Panel;
+        private System.Windows.Forms.Panel OuterPanel_Panel;
     }
 }
 

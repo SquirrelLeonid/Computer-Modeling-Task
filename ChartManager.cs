@@ -1,100 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Computer_Modeling_Task
 {
     public class ChartManager
-    {        
-        private ChartArea _chartArea;
-        private SeriesCollection _series;
-        private int _defaultIterations = 1000;
-        private double _defaultStepValue = 0.01;
+    {
+        private Chart _chart;
+        private Size _defaultSize;
+
+        private int _iterations;       
+        private double _stepValue;
+
+        private const int _defaultIterations = 1500;
+        private const double _default_stepValue = 0.01;
         private const double RungeKuttConst = (1.0 / 6);
-        
+
         public ChartManager(Chart chart)
         {
-            _series = chart.Series;
-            _chartArea = chart.ChartAreas[0];            
+            _chart = chart;
+            _defaultSize = _chart.Size;
+        }
+
+        public void ClearAll()
+        {
+            _chart.Series.Clear();
+            _chart.Legends.Clear();
+            _chart.Size = _defaultSize;
+            _chart.Location = new Point(0, 0);            
         }
 
         public void Draw(BaseChart chart, string method, double startX, double startY,
-            double stepValue, int iterationsCount, double[] parameters)
+            double stepValue, int iterations, double[] parameters)
         {
-            if (stepValue == 0)
-                stepValue = _defaultStepValue;
-            if (iterationsCount == 0)
-                iterationsCount = _defaultIterations;
-                
-            string seriesName = chart.BaseName + "_" + method + "_Series";
-            if (_series.FindByName(seriesName) == null)
-                SetupSeries(seriesName);
+            _stepValue = stepValue == 0 ? _default_stepValue : stepValue;
+            _iterations = iterations == 0 ? _defaultIterations : iterations;
+
+            string fullName = GetFullName(chart.BaseName, startX, startY, parameters);
+            if (_chart.Series.FindByName(fullName) == null)
+                SetupSeries(fullName);
 
             if (method.Equals("Метод Эйлера"))
-                DrawWithEulerMethod(chart, _series[seriesName], startX, startY, iterationsCount, stepValue, parameters);
+                DrawWithEulerMethod(chart, _chart.Series[fullName], startX, startY, parameters);
             else if (method.Equals("Метод Рунге-Кутта"))
-                DrawWithRungeKutt(chart, _series[seriesName], startX, startY, iterationsCount, stepValue, parameters);
+                DrawWithRungeKutt(chart, _chart.Series[fullName], startX, startY, parameters);
+        }
+
+        private string GetFullName(string baseName, double x, double y, params double[] parameters)
+        {
+            var builder = new StringBuilder();
+            builder.Append(baseName).Append("(X= ").Append(x).Append("; Y= ").Append(y).Append(") ");
+            if (parameters != null && parameters.Length != 0)
+            {
+                builder.Append("{");
+                for (int i = 0; i < parameters.Length; i++)
+                    builder.Append(parameters[i]).Append("; ");
+                builder.Append("}");
+            }
+
+            return builder.ToString().Trim();
         }
 
         private void SetupSeries(string seriesName)
         {
-            _series.Add(new Series(seriesName));
-            _series[seriesName].ChartType = SeriesChartType.Spline;
-            _series[seriesName].Color = System.Drawing.Color.Red;
+            _chart.Series.Add(new Series(seriesName));            
+            _chart.Legends.Add(new Legend(seriesName));
+            _chart.ChartAreas[0].AxisX.LabelStyle.Format = "{0.00}";
+            _chart.Series[seriesName].ChartType = SeriesChartType.Spline;
+            _chart.Legends[seriesName].Font = new Font("TimesNewRoman", 11);
+
+            var random = new Random();
+            _chart.Series[seriesName].Color = Color.FromArgb(random.Next(256), random.Next(128), random.Next(196));
         }
 
-        private void DrawWithEulerMethod(BaseChart chart, Series series, double startX, double startY,
-            int iterationsCount, double stepValue, double[] parameters)
+        private void DrawWithEulerMethod(BaseChart chart, Series series, double x, double y, double[] parameters)
         {
-
-            double prevX = startX;
-            double prevY = startY;
-            series.Points.AddXY(prevX, prevY);
-
-            for (int i = 0; i < iterationsCount; i++)
+            for (int i = 0; i < _iterations; i++)
             {
-                double nextX = prevX + stepValue * chart.f(prevX, prevY);
-                double nextY = prevY + stepValue * chart.g(prevX, prevY);
+                series.Points.AddXY(x, y);
 
-                series.Points.AddXY(nextX, nextY);
-
-                prevX = nextX;
-                prevY = nextY;
+                /*Если попытаться написать x += _stepValue * chart.f(x, y); y += _stepValue * chart.g(x, y);
+                 * То теряются какие то знаки после запятой, почему?
+                 * */                
+                double nextX = x + _stepValue * chart.f(x, y);
+                double nextY = y + _stepValue * chart.g(x, y);
+                
+                x = nextX;
+                y = nextY;
             }
         }
 
-        //TODO: Сделать красиво
-        private void DrawWithRungeKutt(BaseChart chart, Series series, double startX, double startY,
-            int iterationsCount, double stepValue, double[] parameters)
+        private void DrawWithRungeKutt(BaseChart chart, Series series, double x, double y, double[] parameters)
         {
-            double prevX = startX;
-            double prevY = startY;
-            double a = parameters[0];
-            series.Points.AddXY(prevX, prevY);
-
-            for (int i = 0; i < iterationsCount; i++)
+            for (int i = 0; i < _iterations; i++)
             {
-                double k1 = stepValue * chart.f(prevX, prevY);
-                double l1 = stepValue * chart.g(prevX, prevY, a);
-                double k2 = stepValue * chart.f(prevX + k1 / 2, prevY + l1 / 2);
-                double l2 = stepValue * chart.g(prevX + k1 / 2, prevY + l1 / 2, a);
-                double k3 = stepValue * chart.f(prevX + k2 / 2, prevY + l2 / 2);
-                double l3 = stepValue * chart.g(prevX + k2 / 2, prevY + l2 / 2, a);
-                double k4 = stepValue * chart.f(prevX + k3, prevY + l3);
-                double l4 = stepValue * chart.g(prevX + k3, prevY + l3, a);
+                double k1 = _stepValue * chart.f(x, y, parameters);
+                double l1 = _stepValue * chart.g(x, y, parameters);
 
-                double K = Math.Round(k1 + 2 * k2 + 2 * k3 + k4, 5);
-                double L = Math.Round(l1 + 2 * l2 + 2 * l3 + l4, 5);
-                double nextX = prevX + RungeKuttConst * K;
-                double nextY = prevY + RungeKuttConst * L;
+                double k2 = _stepValue * chart.f(x + k1 / 2, y + l1 / 2, parameters);
+                double l2 = _stepValue * chart.g(x + k1 / 2, y + l1 / 2, parameters);
 
-                series.Points.AddXY(prevX, prevY);
+                double k3 = _stepValue * chart.f(x + k2 / 2, y + l2 / 2, parameters);
+                double l3 = _stepValue * chart.g(x + k2 / 2, y + l2 / 2, parameters);
 
-                prevX = nextX;
-                prevY = nextY;
+                double k4 = _stepValue * chart.f(x + k3, y + l3, parameters);
+                double l4 = _stepValue * chart.g(x + k3, y + l3, parameters);
+
+                series.Points.AddXY(x, y);
+
+                x += RungeKuttConst * Math.Round(k1 + 2 * k2 + 2 * k3 + k4, 5);
+                y += RungeKuttConst * Math.Round(l1 + 2 * l2 + 2 * l3 + l4, 5);
             }
         }
     }

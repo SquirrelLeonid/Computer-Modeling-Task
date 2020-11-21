@@ -28,6 +28,13 @@ namespace Computer_Modeling_Task
 
         private static void DrawChartValues(Chart chart, int[] yValues)
         {
+            if (chart.Series.FindByName(SeriesName) == null)
+            {
+                chart.Series.Add(new Series(SeriesName));
+                chart.Series[SeriesName].ChartType = SeriesChartType.Spline;
+                chart.Series[SeriesName].Color = System.Drawing.Color.Red;
+                
+            }
             for (int i = 0; i < valuesCount; i++)
                 chart.Series[SeriesName].Points.AddXY(i, yValues[i]);
         }
