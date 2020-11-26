@@ -187,6 +187,15 @@ namespace Computer_Modeling_Task
         {
             isMouseDown = false;
             System.Windows.Forms.Cursor.Current = Cursors.Default;
-        }       
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ChooseChart_ComboBox.SelectedIndex = 1;
+            ChooseMethod_ComboBox.SelectedIndex = 1;
+            StartX_TextBox.Text = "1";
+            StartY_TextBox.Text = "0";           
+        }
     }
 }
