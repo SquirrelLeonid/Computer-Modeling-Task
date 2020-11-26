@@ -15,9 +15,10 @@ namespace Computer_Modeling_Task
         private int _iterations;       
         private double _stepValue;
 
-        private const int _defaultIterations = 1500;
-        private const double _default_stepValue = 0.01;
+        private const int DefaultIterations = 1500;
+        private const double Default_stepValue = 0.01;
         private const double RungeKuttConst = (1.0 / 6);
+        private const int IterationsStep = 2;
 
         public ChartManager(Chart chart)
         {
@@ -36,8 +37,8 @@ namespace Computer_Modeling_Task
         public void Draw(BaseChart chart, string method, double startX, double startY,
             double stepValue, int iterations, double[] parameters)
         {
-            _stepValue = stepValue == 0 ? _default_stepValue : stepValue;
-            _iterations = iterations == 0 ? _defaultIterations : iterations;
+            _stepValue = stepValue == 0 ? Default_stepValue : stepValue;
+            _iterations = iterations == 0 ? DefaultIterations : iterations;
 
             string fullName = GetFullName(chart.BaseName, startX, startY, parameters);
             if (_chart.Series.FindByName(fullName) == null)
@@ -78,7 +79,7 @@ namespace Computer_Modeling_Task
 
         private void DrawWithEulerMethod(BaseChart chart, Series series, double x, double y, double[] parameters)
         {
-            for (int i = 0; i < _iterations; i++)
+            for (int i = 0; i < _iterations; i += IterationsStep)
             {
                 series.Points.AddXY(x, y);
 
@@ -95,7 +96,7 @@ namespace Computer_Modeling_Task
 
         private void DrawWithRungeKutt(BaseChart chart, Series series, double x, double y, double[] parameters)
         {
-            for (int i = 0; i < _iterations; i++)
+            for (int i = 0; i < _iterations; i += IterationsStep)
             {
                 double k1 = _stepValue * chart.f(x, y, parameters);
                 double l1 = _stepValue * chart.g(x, y, parameters);

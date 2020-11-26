@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ExampleChart_Button = new System.Windows.Forms.Button();
             this.Clear_Button = new System.Windows.Forms.Button();
@@ -58,20 +58,22 @@
             // 
             // Chart
             // 
-            this.Chart.Anchor = System.Windows.Forms.AnchorStyles.None;
-            chartArea1.BackColor = System.Drawing.Color.White;
-            chartArea1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea1.Name = "MainArea";
-            this.Chart.ChartAreas.Add(chartArea1);
+            this.Chart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea2.BackColor = System.Drawing.Color.White;
+            chartArea2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea2.Name = "MainArea";
+            this.Chart.ChartAreas.Add(chartArea2);
             this.Chart.Location = new System.Drawing.Point(0, 0);
             this.Chart.Name = "Chart";
-            series1.BorderWidth = 2;
-            series1.ChartArea = "MainArea";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Color = System.Drawing.Color.Red;
-            series1.IsVisibleInLegend = false;
-            series1.Name = "XY_ExampleValues";
-            this.Chart.Series.Add(series1);
+            series2.BorderWidth = 2;
+            series2.ChartArea = "MainArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Color = System.Drawing.Color.Red;
+            series2.IsVisibleInLegend = false;
+            series2.Name = "XY_ExampleValues";
+            this.Chart.Series.Add(series2);
             this.Chart.Size = new System.Drawing.Size(994, 445);
             this.Chart.TabIndex = 0;
             this.Chart.Text = "chart1";
@@ -253,6 +255,9 @@
             // 
             // InnerPanel_Panel
             // 
+            this.InnerPanel_Panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.InnerPanel_Panel.Controls.Add(this.Chart);
             this.InnerPanel_Panel.Location = new System.Drawing.Point(25, 25);
             this.InnerPanel_Panel.Name = "InnerPanel_Panel";
@@ -261,6 +266,9 @@
             // 
             // OuterPanel_Panel
             // 
+            this.OuterPanel_Panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OuterPanel_Panel.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.OuterPanel_Panel.Controls.Add(this.InnerPanel_Panel);
             this.OuterPanel_Panel.Location = new System.Drawing.Point(12, 188);
